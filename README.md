@@ -12,13 +12,15 @@ You'll notice that there are actually four scripts relating to playback in the r
 ## Video conversion
 As described above, the video file read by the script is actually just a massive JSON file full of nested arrays. 
 
-To get to that JSON file from the original 480x360 30fps video, it was run through several transformations. First, it was ran through `ffmpeg`'s `threshold` filter to make it all entirely black and white, with no graytones. Next, it was scaled down to 20x15. Then, it was run through the `threshold` filter again, before each frame at 20fps was extracted as a numbered PNG image. Lastly, the `generate.js` script loaded each image up, and read each pixel's value from the red channel (it's all white and black so the color channel used didn't matter), storing into an array alongside the specified framerate.
+To get to that JSON file from the original 480x360 30fps video, it was run through several transformations. First, it was ran through `ffmpeg`'s `threshold` filter to make it all entirely black and white, with no graytones. Next, it was scaled down to 20x15. Then, it was run through the `threshold` filter again, before each frame at 20fps was extracted as a numbered PNG image under `./frames`. Lastly, the `generate.js` script loaded each image up, and read each pixel's value from the red channel (it's all white and black so the color channel used didn't matter), storing into an array alongside the specified framerate.
 
 Once every image had been read and parsed, the now-very-large array was formatted as JSON and written out as `converted.json`. The `generate.js` script accepts the frame rate as a command line argument. If none is specified, it defaults to 25fps. 
 ## Version 2 versus Version 1
 * Increase demo resolution from 14x10 to 20x15
-* `generate.js` gets the resolution from the PNGs rather than having it hardcoded
-* `generate.js` reads framerate from command line paramters
+* `generate.js`:
+  * Resolution is taken from the PNGs rather than having it hardcoded
+  * Framerate can be specified with a command line parameter
+  * Total number of frames to be comverted is taken from directory listing instead of having it hardcoded
 * `converted.json` contains the framerate at the start of the file
 * Playback timing and boolean toggling split into separate threads
 * `player1.js` and `player2.js` calculate timings using framerate in `converted.json` instead of having it hardcoded at 50 milliseconds
