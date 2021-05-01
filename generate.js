@@ -1,21 +1,45 @@
 var getPixels = require("get-pixels");
 var fs = require('fs');
-const { resolve } = require("path");
 var storage = [];
 var i = 0;
+var width;
+var height;
+const optionDefinitions = [{
+    name: 'fps',
+    alias: 'r',
+    type: Number,
+    defaultOption: true,
+    defaultValue: 25
+}];
+const commandLineArgs = require('command-line-args');
+const options = commandLineArgs(optionDefinitions);
 
-main().then(() => {
-    fs.writeFileSync('converted.json', JSON.stringify(storage));
-    console.log("COMPLETE");
-    process.exit();
+
+getPixels("frames/001.png", function (err, pixels) {
+    if (err) {
+        console.error(err);
+    } else {
+        width = pixels.shape.slice()[0];
+        height = pixels.shape.slice()[1];
+        fs.readdir('./frames', (err, files) => {
+            main(files.length).then(() => {
+                fs.writeFileSync('converted.json', JSON.stringify([options.fps, storage]));
+                console.log("COMPLETE");
+                process.exit();
+            });
+        });
+    }
 });
 
-async function main() {
-    while (i < 4384) {
+async function main(count) {
+    while (i < count) {
         var row_array = [];
         var j = 0;
         var output = await new Promise(function (resolve, reject) {
-            getPixels("frames/" + (i + 1).toLocaleString('en-US', { minimumIntegerDigits: 3, useGrouping: false }) + ".png", (err, pixels) => {
+            getPixels("frames/" + (i + 1).toLocaleString('en-US', {
+                minimumIntegerDigits: 3,
+                useGrouping: false
+            }) + ".png", (err, pixels) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -23,11 +47,11 @@ async function main() {
                 }
             });
         });
-        while (j < 10) {
+        while (j < height) {
             var k = 0;
             var column_array = [];
-            while (k < 14) {
-                if (Number(output.get(k, j, 0)) == 255) {
+            while (k < width) {
+                if (Number(output.get(k, j, 0)) > 127) {
                     column_array.push(1);
                 } else {
                     column_array.push(0);
