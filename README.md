@@ -56,6 +56,7 @@ Aside from Shuffleboard, the demo uses a few external dependencies:
   * `server.py` is actually [just ripped straight from the example docs](https://robotpy.readthedocs.io/projects/pynetworktables/en/stable/examples.html#robot-example)
 * [`play.js`](https://github.com/Marak/play.js/blob/master/README.md), included under the `lib` folder for playing the audio alongside the video
 * `mpv` for actually playing the audio
+* FFmpeg and FFplay, which form the backbone of `stream.js`
 
 ## Why?
 Because as far as I can tell, nobody has done this one before.
