@@ -30,7 +30,7 @@ For the former, the file was reencoded as a raw RGB24 MOV file with raw PCM U8 a
 For the latter, each frame at 20fps was extracted as a numbered PNG image into `./frames`, and the `generate.js` script was used, which loaded each image up, and read each pixel's value from the red channel (it's all white and black so the color channel used didn't matter), storing into an array alongside the specified framerate. Once every image had been read and parsed, the large resulting array was formatted as JSON and written out as `converted.json`. The `generate.js` script accepts the frame rate as a command line argument. If none is specified, it defaults to 25fps. 
 
 ## Version 3 versus Version 2
-* Uses an raw RGB24+PCM_U8 MOV file as input instead of a JSON file
+* Uses a raw RGB24+PCM_U8 MOV file as input instead of a JSON file
 * Use FFmpeg to control playback
 * Proper A/V synchronization
 * Requires use of a ramdisk for best results
