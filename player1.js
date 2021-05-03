@@ -3,7 +3,20 @@ const {
     Worker
 } = require('worker_threads');
 const fs = require('fs');
-const obj = JSON.parse(fs.readFileSync('converted.json', 'utf8'));
+const optionDefinitions = [{
+    name: 'input',
+    alias: 'i',
+    type: String,
+    defaultValue: 'converted.json'
+}, {
+    name: 'audio', 
+    alias: 'a',
+    type: String,
+    defaultValue: 'audio.mp3'
+}];
+const commandLineArgs = require('command-line-args');
+const options = commandLineArgs(optionDefinitions);
+const obj = JSON.parse(fs.readFileSync(options.input, 'utf8'));
 const frameTime = 1000 / obj[0];
 
 function displayPulse() {
@@ -17,10 +30,14 @@ function handleMessage(msg) {
             //setTimeout(displayPulse, 1500);
             displayPulse();
         });
-        play.sound('audio.mp3');
+        play.sound(options.audio);
     } else {
         //interval._repeat = 1000/obj[0] - msg;
-        setTimeout(displayPulse, frameTime - (msg - frameTime));
+        let intervalTime = frameTime;
+        if (msg > 0) {
+            intervalTime = frameTime - (msg - frameTime);
+        }
+        setTimeout(displayPulse, intervalTime);
     }
 }
 

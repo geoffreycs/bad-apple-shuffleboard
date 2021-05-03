@@ -10,20 +10,30 @@ const optionDefinitions = [{
     type: Number,
     defaultOption: true,
     defaultValue: 25
+}, {
+    name: 'folder',
+    alias: 'i',
+    type: String,
+    defaultValue: 'frames'
+}, {
+    name: 'output',
+    alias: 'o',
+    type: String,
+    defaultValue: 'converted.json'
 }];
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
 
 
-getPixels("frames/001.png", function (err, pixels) {
+getPixels(options.folder + "/001.png", function (err, pixels) {
     if (err) {
         console.error(err);
     } else {
         width = pixels.shape.slice()[0];
         height = pixels.shape.slice()[1];
-        fs.readdir('./frames', (err, files) => {
+        fs.readdir('./' + options.folder, (err, files) => {
             main(files.length).then(() => {
-                fs.writeFileSync('converted.json', JSON.stringify([options.fps, storage]));
+                fs.writeFileSync(options.output, JSON.stringify([options.fps, storage]));
                 console.log("COMPLETE");
                 process.exit();
             });
@@ -36,7 +46,7 @@ async function main(count) {
         var row_array = [];
         var j = 0;
         var output = await new Promise(function (resolve, reject) {
-            getPixels("frames/" + (i + 1).toLocaleString('en-US', {
+            getPixels(options.folder + "/" + (i + 1).toLocaleString('en-US', {
                 minimumIntegerDigits: 3,
                 useGrouping: false
             }) + ".png", (err, pixels) => {

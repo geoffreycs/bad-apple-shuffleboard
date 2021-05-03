@@ -4,6 +4,7 @@ const now = require('performance-now');
 var frame = 0;
 var obj = null;
 var previousTime = 0;
+var firstLoop = true;
 
 function handleMessage(msg) {
     switch (msg.name) {
@@ -21,9 +22,15 @@ function handleMessage(msg) {
 
 function updateDisplay() {
     let newTime = now();
+    let timeDiff = 0;
+    if (firstLoop == false) {
+        timeDiff = newTime - previousTime;
+    } else {
+        firstLoop = false;
+    }
     process.send({
         name: "timing",
-        data: newTime - previousTime
+        data: timeDiff
     });
     try {
         switch (frame) {

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "colors": "^1.4.0",
     "command-line-args": "^5.1.1",
     "get-pixels": "^3.3.2",
     "performance-now": "^2.1.0",

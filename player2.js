@@ -3,7 +3,20 @@ const {
     fork
 } = require('child_process');
 const fs = require('fs');
-const obj = JSON.parse(fs.readFileSync('converted.json', 'utf8'));
+const optionDefinitions = [{
+    name: 'input',
+    alias: 'i',
+    type: String,
+    defaultValue: 'converted.json'
+}, {
+    name: 'audio',
+    alias: 'a',
+    type: String,
+    defaultValue: 'audio.mp3'
+}];
+const commandLineArgs = require('command-line-args');
+const options = commandLineArgs(optionDefinitions);
+const obj = JSON.parse(fs.readFileSync(options.input, 'utf8'));
 var child = null;
 const frameTime = 1000 / obj[0];
 
@@ -27,10 +40,15 @@ function handleMessage(msg) {
             play.on('play', () => {
                 displayPulse();
             });
-            play.sound('audio.mp3');
+            play.sound(options.audio);
             break;
         case "timing":
-            setTimeout(displayPulse, frameTime - (msg.data - frameTime));
+            let intervalTime = frameTime;
+            if (msg.data > 0) {
+                intervalTime = frameTime - (msg.data - frameTime);
+            }
+            setTimeout(displayPulse, intervalTime);
+            break;
     }
 }
 

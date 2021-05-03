@@ -7,11 +7,17 @@ const client = new ntClient.Client();
 const now = require('performance-now');
 var frame = 0;
 var previousTime = 0;
+var firstLoop = true;
 
 function updateDisplay() {
     let newTime = now();
+    let timeDiff = 0;
+    if (firstLoop == false) {
+        timeDiff = newTime - previousTime;
+    } else {
+        firstLoop = false;
+    }
     parentPort.postMessage(newTime - previousTime);
-    //console.log(String(timeDiff));
 
     try {
         switch (frame) {
