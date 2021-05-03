@@ -4,11 +4,17 @@ const {
 } = require('worker_threads');
 const ntClient = require('wpilib-nt-client');
 const client = new ntClient.Client();
+const now = require('performance-now');
 var frame = 0;
+var previousTime = 0;
 
 function updateDisplay() {
+    let newTime = now();
+    parentPort.postMessage(newTime - previousTime);
+    //console.log(String(timeDiff));
+
     try {
-        switch(frame) {
+        switch (frame) {
             case 0:
                 console.time('60 frames');
                 break;
@@ -33,6 +39,7 @@ function updateDisplay() {
         parentPort.postMessage("done");
         process.exit();
     }
+    previousTime = newTime;
 }
 
 function pulseListener(msg) {

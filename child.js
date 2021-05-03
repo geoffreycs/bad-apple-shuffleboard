@@ -1,13 +1,17 @@
 const ntClient = require('wpilib-nt-client');
 const client = new ntClient.Client();
+const now = require('performance-now');
 var frame = 0;
 var obj = null;
+var previousTime = 0;
 
 function handleMessage(msg) {
     switch (msg.name) {
         case "data":
             obj = msg.data;
-            process.send("received");
+            process.send({
+                name: "received"
+            });
             break;
         case "pulse":
             updateDisplay();
@@ -16,8 +20,13 @@ function handleMessage(msg) {
 }
 
 function updateDisplay() {
+    let newTime = now();
+    process.send({
+        name: "timing",
+        data: newTime - previousTime
+    });
     try {
-        switch(frame) {
+        switch (frame) {
             case 0:
                 console.time('60 frames');
                 break;
@@ -42,6 +51,7 @@ function updateDisplay() {
         process.send("done");
         process.exit();
     }
+    previousTime = newTime;
 }
 
 process.on('message', handleMessage);
@@ -50,6 +60,8 @@ client.start((isConnected, err) => {
     if (err) {
         throw err;
     } else {
-        process.send("launched");
+        process.send({
+            name: "launched"
+        });
     }
 }, '127.0.0.1');

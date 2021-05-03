@@ -5,7 +5,7 @@ const {
 const fs = require('fs');
 const obj = JSON.parse(fs.readFileSync('converted.json', 'utf8'));
 var child = null;
-var interval = null;
+const frameTime = 1000 / obj[0];
 
 function displayPulse() {
     child.send({
@@ -15,7 +15,7 @@ function displayPulse() {
 }
 
 function handleMessage(msg) {
-    switch (msg) {
+    switch (msg.name) {
         case "launched":
             child.send({
                 name: "data",
@@ -25,10 +25,12 @@ function handleMessage(msg) {
         case "received":
             play.usePlayer('mpv');
             play.on('play', () => {
-                interval = setInterval(displayPulse, 1000 / obj[0]);
+                displayPulse();
             });
             play.sound('audio.mp3');
             break;
+        case "timing":
+            setTimeout(displayPulse, frameTime - (msg.data - frameTime));
     }
 }
 

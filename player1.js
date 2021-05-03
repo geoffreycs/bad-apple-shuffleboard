@@ -4,34 +4,29 @@ const {
 } = require('worker_threads');
 const fs = require('fs');
 const obj = JSON.parse(fs.readFileSync('converted.json', 'utf8'));
-var worker = null;
-var interval = null;
-
-function launchRenderer() {
-    return new Promise((resolve, reject) => {
-        worker = new Worker('./render.js', {
-            workerData: obj[1]
-        });
-        worker.on('message', resolve);
-        worker.on('error', reject);
-        worker.on('exit', process.exit);
-    });
-}
+const frameTime = 1000 / obj[0];
 
 function displayPulse() {
     worker.postMessage("pulse");
 }
 
-function initPlayback(msg) {
+function handleMessage(msg) {
     if (msg == "ready") {
         play.usePlayer('mpv');
         play.on('play', () => {
-            interval = setInterval(displayPulse, 1000/obj[0]);
+            //setTimeout(displayPulse, 1500);
+            displayPulse();
         });
         play.sound('audio.mp3');
+    } else {
+        //interval._repeat = 1000/obj[0] - msg;
+        setTimeout(displayPulse, frameTime - (msg - frameTime));
     }
 }
 
-let renderProcess = launchRenderer();
-renderProcess.catch(err => console.error(err));
-renderProcess.then(initPlayback);
+let worker = new Worker('./render.js', {
+    workerData: obj[1]
+});
+worker.on('message', handleMessage);
+worker.on('error', console.error);
+worker.on('exit', process.exit);
