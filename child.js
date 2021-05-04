@@ -34,10 +34,10 @@ function updateDisplay() {
     });
     try {
         switch (frame) {
-            case 0:
+            case 3:
                 console.time('60 frames');
                 break;
-            case 60:
+            case 63:
                 console.timeEnd('60 frames');
         }
         obj[frame].forEach((scanline, row) => {
