@@ -8,24 +8,25 @@ const now = require('performance-now');
 var frame = 0;
 var previousTime = 0;
 var firstLoop = true;
+const sampleFrames = 60;
 
 function updateDisplay() {
     let newTime = now();
     let timeDiff = 0;
-    if (firstLoop == false) {
+    if (!firstLoop) {
         timeDiff = newTime - previousTime;
     } else {
         firstLoop = false;
     }
-    parentPort.postMessage(newTime - previousTime);
-
+    parentPort.postMessage(timeDiff);
     try {
         switch (frame) {
-            case 0:
-                console.time('60 frames');
+            case 3:
+                console.time(String(sampleFrames) + ' frames');
                 break;
-            case 60:
-                console.timeEnd('60 frames');
+            case (sampleFrames + 3):
+                console.timeEnd(String(sampleFrames) + ' frames');
+                break;
         }
         workerData[frame].forEach((scanline, row) => {
             scanline.forEach((pixel, column) => {
@@ -48,17 +49,11 @@ function updateDisplay() {
     previousTime = newTime;
 }
 
-function pulseListener(msg) {
-    if (msg == "pulse") {
-        updateDisplay();
-    }
-}
-
 client.start((isConnected, err) => {
     if (err) {
         throw err;
     } else {
-        parentPort.on('message', pulseListener);
+        parentPort.on('message', updateDisplay);
         parentPort.postMessage("ready");
     }
 }, '127.0.0.1');

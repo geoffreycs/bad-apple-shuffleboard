@@ -14,20 +14,17 @@ const optionDefinitions = [{
     type: String,
     defaultValue: 'audio.mp3'
 }];
+const now = require('performance-now');
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
 const obj = JSON.parse(fs.readFileSync(options.input, 'utf8'));
 var child = null;
 const frameTime = 1000 / obj[0];
-
-function displayPulse() {
-    child.send({
-        name: "pulse",
-        data: null
-    });
-}
+var timeCorrection = 0;
+var lastInterval;
 
 function handleMessage(msg) {
+    let handleBegin = now();
     switch (msg.name) {
         case "launched":
             child.send({
@@ -38,16 +35,25 @@ function handleMessage(msg) {
         case "received":
             play.usePlayer('mpv');
             play.on('play', () => {
-                displayPulse();
+                child.send({
+                    name: "pulse",
+                    data: null
+                });
             });
             play.sound(options.audio);
             break;
         case "timing":
-            let intervalTime = frameTime;
-            if (msg.data > 0) {
-                intervalTime = frameTime - (msg.data - frameTime);
+            if (msg > 0) {
+                timeCorrection = -(msg - frameTime);
             }
-            setTimeout(displayPulse, intervalTime);
+            let intervalTime = frameTime + timeCorrection - (now() - handleBegin);
+            setTimeout(() => {
+                child.send({
+                    name: "pulse",
+                    data: null
+                });
+            }, lastInterval);
+            lastInterval = intervalTime;
             break;
     }
 }

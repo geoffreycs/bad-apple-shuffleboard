@@ -9,35 +9,33 @@ const optionDefinitions = [{
     type: String,
     defaultValue: 'converted.json'
 }, {
-    name: 'audio', 
+    name: 'audio',
     alias: 'a',
     type: String,
     defaultValue: 'audio.mp3'
 }];
+//const now = require('performance-now');
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
 const obj = JSON.parse(fs.readFileSync(options.input, 'utf8'));
 const frameTime = 1000 / obj[0];
-
-function displayPulse() {
-    worker.postMessage("pulse");
-}
+var timeCorrection = 0;
 
 function handleMessage(msg) {
+    //let handleBegin = now();
     if (msg == "ready") {
         play.usePlayer('mpv');
         play.on('play', () => {
             //setTimeout(displayPulse, 1500);
-            displayPulse();
+            worker.postMessage(null);
         });
         play.sound(options.audio);
     } else {
-        //interval._repeat = 1000/obj[0] - msg;
-        let intervalTime = frameTime;
         if (msg > 0) {
-            intervalTime = frameTime - (msg - frameTime);
+            timeCorrection = -(msg - frameTime);
         }
-        setTimeout(displayPulse, intervalTime);
+        let intervalTime = frameTime + timeCorrection;
+        setTimeout(() => { worker.postMessage(null); }, intervalTime /* - (now() - handleBegin)*/);
     }
 }
 

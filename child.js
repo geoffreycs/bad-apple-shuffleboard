@@ -5,8 +5,10 @@ var frame = 0;
 var obj = null;
 var previousTime = 0;
 var firstLoop = true;
+const sampleFrames = 60;
 
 function handleMessage(msg) {
+    let newTime = now();
     switch (msg.name) {
         case "data":
             obj = msg.data;
@@ -15,15 +17,14 @@ function handleMessage(msg) {
             });
             break;
         case "pulse":
-            updateDisplay();
+            updateDisplay(newTime);
             break;
     }
 }
 
-function updateDisplay() {
-    let newTime = now();
+function updateDisplay(newTime) {
     let timeDiff = 0;
-    if (firstLoop == false) {
+    if (!firstLoop) {
         timeDiff = newTime - previousTime;
     } else {
         firstLoop = false;
@@ -34,11 +35,12 @@ function updateDisplay() {
     });
     try {
         switch (frame) {
-            case 0:
-                console.time('60 frames');
+            case 3:
+                console.time(String(sampleFrames) + ' frames');
                 break;
-            case 60:
-                console.timeEnd('60 frames');
+            case (sampleFrames + 3):
+                console.timeEnd(String(sampleFrames) + ' frames');
+                break;
         }
         obj[frame].forEach((scanline, row) => {
             scanline.forEach((pixel, column) => {
