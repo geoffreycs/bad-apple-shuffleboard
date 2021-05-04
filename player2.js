@@ -19,7 +19,6 @@ const options = commandLineArgs(optionDefinitions);
 const obj = JSON.parse(fs.readFileSync(options.input, 'utf8'));
 var child = null;
 const frameTime = 1000 / obj[0];
-let lastInterval = frameTime;
 
 function displayPulse() {
     child.send({
@@ -46,10 +45,9 @@ function handleMessage(msg) {
         case "timing":
             let intervalTime = frameTime;
             if (msg.data > 0) {
-                intervalTime = frameTime - 1.00005*(msg.data - frameTime);
+                intervalTime = frameTime - (msg.data - frameTime);
             }
-            setTimeout(displayPulse, lastInterval);
-            lastInterval = intervalTime;
+            setTimeout(displayPulse, intervalTime);
             break;
     }
 }

@@ -18,7 +18,6 @@ const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
 const obj = JSON.parse(fs.readFileSync(options.input, 'utf8'));
 const frameTime = 1000 / obj[0];
-let lastInterval = frameTime;
 
 function displayPulse() {
     worker.postMessage("pulse");
@@ -35,11 +34,10 @@ function handleMessage(msg) {
     } else {
         //interval._repeat = 1000/obj[0] - msg;
         let intervalTime = frameTime;
-            if (msg > 0) {
-                intervalTime = frameTime - 1.00003*(msg - frameTime);
-            }
-            setTimeout(displayPulse, lastInterval);
-            lastInterval = intervalTime;
+        if (msg > 0) {
+            intervalTime = frameTime - (msg - frameTime);
+        }
+        setTimeout(displayPulse, intervalTime);
     }
 }
 
