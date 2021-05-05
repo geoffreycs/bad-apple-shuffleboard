@@ -14,17 +14,14 @@ const optionDefinitions = [{
     type: String,
     defaultValue: 'audio.mp3'
 }];
-const now = require('performance-now');
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
 const obj = JSON.parse(fs.readFileSync(options.input, 'utf8'));
 var child = null;
 const frameTime = 1000 / obj[0];
 var timeCorrection = 0;
-var lastInterval;
 
 function handleMessage(msg) {
-    let handleBegin = now();
     switch (msg.name) {
         case "launched":
             child.send({
@@ -43,17 +40,17 @@ function handleMessage(msg) {
             play.sound(options.audio);
             break;
         case "timing":
-            if (msg > 0) {
-                timeCorrection = -(msg - frameTime);
+            if (msg.data > 0) {
+                timeCorrection = -(msg.data - frameTime);
             }
-            let intervalTime = frameTime + timeCorrection - (now() - handleBegin);
+            let intervalTime = frameTime + timeCorrection;
             setTimeout(() => {
                 child.send({
                     name: "pulse",
                     data: null
                 });
-            }, lastInterval);
-            lastInterval = intervalTime;
+            }, intervalTime);
+            //console.log("Measured: " + String(msg.data) + "\nCorrection: " + String(timeCorrection) + "\nNext: " + String(intervalTime) + "\n");
             break;
     }
 }

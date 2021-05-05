@@ -14,7 +14,6 @@ const optionDefinitions = [{
     type: String,
     defaultValue: 'audio.mp3'
 }];
-//const now = require('performance-now');
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
 const obj = JSON.parse(fs.readFileSync(options.input, 'utf8'));
@@ -35,7 +34,7 @@ function handleMessage(msg) {
             timeCorrection = -(msg - frameTime);
         }
         let intervalTime = frameTime + timeCorrection;
-        setTimeout(() => { worker.postMessage(null); }, intervalTime /* - (now() - handleBegin)*/);
+        setTimeout(() => { worker.postMessage(null); }, intervalTime);
     }
 }
 
