@@ -13,6 +13,20 @@ const optionDefinitions = [{
     alias: 'a',
     type: String,
     defaultValue: 'audio.mp3'
+}, {
+    name: 'debug',
+    alias: 'd',
+    type: Boolean,
+    defaultValue: 'false'
+}, {
+    name: 'server',
+    alias: 's',
+    type: String,
+    defaultValue: '127.0.0.1'
+}, {
+    name: 'mpv',
+    type: String,
+    defaultValue: 'mpv'
 }];
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
@@ -25,23 +39,36 @@ function handleMessage(msg) {
     switch (msg.name) {
         case "launched":
             child.send({
+                name: "server",
+                data: options.server
+            });
+            break;
+        case "connected":
+            child.send({
                 name: "data",
                 data: obj[1]
             });
             break;
         case "received":
-            play.usePlayer('mpv');
-            play.on('play', () => {
+            if (options.audio == "none") {
                 child.send({
                     name: "pulse",
                     data: null
                 });
-            });
-            play.sound(options.audio);
+            } else {
+                play.usePlayer(options.mpv);
+                play.on('play', () => {
+                    child.send({
+                        name: "pulse",
+                        data: null
+                    });
+                });
+                play.sound(options.audio);
+            }
             break;
         case "timing":
             if (msg.data > 0) {
-                timeCorrection = -(msg.data - frameTime);
+                timeCorrection = timeCorrection - (msg.data - frameTime);
             }
             let intervalTime = frameTime + timeCorrection;
             setTimeout(() => {
@@ -50,7 +77,9 @@ function handleMessage(msg) {
                     data: null
                 });
             }, intervalTime);
-            //console.log("Measured: " + String(msg.data) + "\nCorrection: " + String(timeCorrection) + "\nNext: " + String(intervalTime) + "\n");
+            if (options.debug == true) {
+                console.log("Measured: " + String(msg.data) + "\nCorrection: " + String(timeCorrection) + "\nNext: " + String(intervalTime) + "\n");
+            }
             break;
     }
 }

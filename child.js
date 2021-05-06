@@ -10,6 +10,17 @@ const sampleFrames = 60;
 function handleMessage(msg) {
     let newTime = now();
     switch (msg.name) {
+        case "server":
+            client.start((isConnected, err) => {
+                if (err) {
+                    throw err;
+                } else {
+                    process.send({
+                        name: "connected"
+                    });
+                }
+            }, msg.data);
+            break;
         case "data":
             obj = msg.data;
             process.send({
@@ -64,13 +75,6 @@ function updateDisplay(newTime) {
 }
 
 process.on('message', handleMessage);
-
-client.start((isConnected, err) => {
-    if (err) {
-        throw err;
-    } else {
-        process.send({
-            name: "launched"
-        });
-    }
-}, '127.0.0.1');
+process.send({
+    name: "launched"
+});

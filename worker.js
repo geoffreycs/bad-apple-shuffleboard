@@ -5,7 +5,7 @@ const {
 const ntClient = require('wpilib-nt-client');
 const client = new ntClient.Client();
 var getPixels = require("get-pixels");
-const tmp_out = workerData;
+const tmp_out = workerData[0];
 var height;
 var width;
 
@@ -72,4 +72,4 @@ parentPort.on('message', messageHandler);
 
 client.start((isConnected, err) => {
     parentPort.postMessage(null);
-}, '127.0.0.1');
+}, workerData[1]);

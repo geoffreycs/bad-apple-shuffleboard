@@ -28,7 +28,7 @@ function updateDisplay() {
                 console.timeEnd(String(sampleFrames) + ' frames');
                 break;
         }
-        workerData[frame].forEach((scanline, row) => {
+        workerData[0][frame].forEach((scanline, row) => {
             scanline.forEach((pixel, column) => {
                 var key_target = "/display/row" + String(row) + "/column" + String(column);
                 if (pixel == 1) {
@@ -56,4 +56,4 @@ client.start((isConnected, err) => {
         parentPort.on('message', updateDisplay);
         parentPort.postMessage("ready");
     }
-}, '127.0.0.1');
+}, workerData[1]);
