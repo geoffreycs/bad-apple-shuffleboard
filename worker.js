@@ -72,4 +72,5 @@ parentPort.on('message', messageHandler);
 
 client.start((isConnected, err) => {
     parentPort.postMessage(null);
+    client.Assign(9999, "/display/frame");
 }, workerData[1]);

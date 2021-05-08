@@ -9,7 +9,7 @@ const optionDefinitions = [{
     alias: 'r',
     type: Number,
     defaultOption: true,
-    defaultValue: 25
+    defaultValue: 30
 }, {
     name: 'folder',
     alias: 'i',

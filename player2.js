@@ -27,6 +27,10 @@ const optionDefinitions = [{
     name: 'mpv',
     type: String,
     defaultValue: 'mpv'
+}, {
+    name: 'delay',
+    type: Number,
+    defaultValue: 0
 }];
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
@@ -58,10 +62,12 @@ function handleMessage(msg) {
             } else {
                 play.usePlayer(options.mpv);
                 play.on('play', () => {
-                    child.send({
-                        name: "pulse",
-                        data: null
-                    });
+                    setTimeout(() => {
+                        child.send({
+                            name: "pulse",
+                            data: null
+                        });
+                    }, options.delay);
                 });
                 play.sound(options.audio);
             }

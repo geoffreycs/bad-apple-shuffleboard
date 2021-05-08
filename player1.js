@@ -27,6 +27,10 @@ const optionDefinitions = [{
     name: 'mpv',
     type: String,
     defaultValue: 'mpv'
+}, {
+    name: 'delay',
+    type: Number,
+    defaultValue: 0
 }];
 const commandLineArgs = require('command-line-args');
 const options = commandLineArgs(optionDefinitions);
@@ -40,18 +44,26 @@ function handleMessage(msg) {
         if (options.audio == "none") {
             worker.postMessage(null);
         } else {
-            play.usePlayer(options.mpv);
-            play.on('play', () => {
+            if (options.audio == "none") {
                 worker.postMessage(null);
-            });
-            play.sound(options.audio);
+            } else {
+                play.usePlayer(options.mpv);
+                play.on('play', () => {
+                    setTimeout(() => {
+                        worker.postMessage(null);
+                    }, options.delay);
+                });
+                play.sound(options.audio);
+            }
         }
     } else {
         if (msg > 0) {
             timeCorrection = timeCorrection - (msg - frameTime);
         }
         let intervalTime = frameTime + timeCorrection;
-        setTimeout(() => { worker.postMessage(null); }, intervalTime);
+        setTimeout(() => {
+            worker.postMessage(null);
+        }, intervalTime);
         if (options.debug == true) {
             console.log("Measured: " + String(msg) + "\nCorrection: " + String(timeCorrection) + "\nNext: " + String(intervalTime) + "\n");
         }
