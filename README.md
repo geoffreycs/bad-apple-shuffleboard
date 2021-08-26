@@ -49,8 +49,6 @@ Version 1.0.0 demo: https://youtu.be/po4Deg7V8vA
 * `--fps`/`-r`: Frames per second of intended video output. Defaults to 25.
 * `--folder`/`-i`: Path to folder containing PNG frameset. Defaults to `frames`.
 * `--output`/`-o`: Path of JSON to output to. Defaults to `converted.json`.
-* `--ffmpeg`: Path to FFmpeg executable. Defaults to `ffmpeg` in PATH.
-* `--ffplay`: Path to FFplay executable. Defaults to `ffplay` in PATH.
 
 ### `stream.js`
 
@@ -59,6 +57,8 @@ Version 1.0.0 demo: https://youtu.be/po4Deg7V8vA
 * `--input`/`-i`: Path to video file. Defaults to `./bad_apple_raw.mov`, which is probably not useful for you.
 * `--tmp_dir`/`-t`: Path to writable ramdisk. Defaults to `/media/geoffrey/ramdisk`, which is definitely useless for you.
 * `--server`/`-s`: Hostname or IP address of NetworkTables server. Defaults to `127.0.0.1`.
+* `--ffmpeg`: Path to FFmpeg executable. Defaults to `ffmpeg` in PATH.
+* `--ffplay`: Path to FFplay executable. Defaults to `ffplay` in PATH.
 
 ## Playback (Version 2.x.x)
 The playback script connects to the server, starts playing the audio file using `mpv` (unless `--audio none` is passed), and then begins to play the frame sequence. The "video" is stored in a JSON file, which is formated so that once parsed, any given pixel can be accessed using `parsed[1][frame][row][column]` and the frame rate can be accessed as `[parsed][0]`. Each pixel is itself just a `1` or `0`, representing white and black, respectively.  
