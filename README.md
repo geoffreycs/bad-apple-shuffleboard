@@ -44,7 +44,7 @@ Version 1.0.0 demo: https://youtu.be/po4Deg7V8vA
 
 ### `generate.js`
 
-```node generate.js [--fps (-r) fps] [--folder (-i) path/to/folder/with/frames] [--output (-o) /path/to/output.json] [--ffmpeg /path/to/ffmpeg/binary] [--ffplay /path/to/ffplay/binary]```
+```node generate.js [--fps (-r) fps] [--folder (-i) path/to/folder/with/frames] [--output (-o) /path/to/output.json]```
 
 * `--fps`/`-r`: Frames per second of intended video output. Defaults to 25.
 * `--folder`/`-i`: Path to folder containing PNG frameset. Defaults to `frames`.
@@ -52,7 +52,7 @@ Version 1.0.0 demo: https://youtu.be/po4Deg7V8vA
 
 ### `stream.js`
 
-```node stream.js [--input (-i) /path/to/video.mov] [--tmp_dir (-t) /path/to/ramdisk] [--server (-s) networktables.server]```
+```node stream.js [--input (-i) /path/to/video.mov] [--tmp_dir (-t) /path/to/ramdisk] [--server (-s) networktables.server] [--ffmpeg /path/to/ffmpeg/binary] [--ffplay /path/to/ffplay/binary]```
 
 * `--input`/`-i`: Path to video file. Defaults to `./bad_apple_raw.mov`, which is probably not useful for you.
 * `--tmp_dir`/`-t`: Path to writable ramdisk. Defaults to `/media/geoffrey/ramdisk`, which is definitely useless for you.
