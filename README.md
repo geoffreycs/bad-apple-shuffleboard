@@ -1,7 +1,9 @@
 # Bad Apple but it's played on FRC's WPILib Shuffleboard
-Demo for 2.3.1 coming soon.
+Demo for 2.3.1 coming soon. (Update: No, it's not. I'm out of high school and have a job now.)
 Version 2.0.0 demo: https://youtu.be/KpqA7TDJLUQ  
 Version 1.0.0 demo: https://youtu.be/po4Deg7V8vA
+
+Side note: This was originally made back in high school when I had too much free time, hence the overly wordy README which I apologize for.
 
 ## Requirements
 
@@ -61,7 +63,7 @@ Version 1.0.0 demo: https://youtu.be/po4Deg7V8vA
 * `--ffplay`: Path to FFplay executable. Defaults to `ffplay` in PATH.
 
 ## Playback (Version 2.x.x)
-The playback script connects to the server, starts playing the audio file using `mpv` (unless `--audio none` is passed), and then begins to play the frame sequence. The "video" is stored in a JSON file, which is formated so that once parsed, any given pixel can be accessed using `parsed[1][frame][row][column]` and the frame rate can be accessed as `[parsed][0]`. Each pixel is itself just a `1` or `0`, representing white and black, respectively.  
+The playback script connects to the server, starts playing the audio file using `mpv` (unless `--audio none` is passed), and then begins to play the frame sequence. The "video" is stored in a JSON file, which is formated so that once parsed, any given pixel can be accessed using `parsed[1][frame][row][column]` and the frame rate can be accessed as `parsed[0]`. Each pixel is itself just a `1` or `0`, representing white and black, respectively.  
 
 In order to actually play it, though, the script runs a function every several milliseconds (the exact timing is determined by the framerate stored in the JSON file) that goes to the current frame (starting with zero), iterating through each sub-array (row), where it iterates through each sub-sub-array (column), pushing `true` or `false` to a corresponding NetworkTables key for `1` (white) or `0` (black), respectively. After it has completely scanned through a frame, it increments the frame counter and pushes the frame number to NetworkTables as `/display/frame`.  
 
@@ -80,7 +82,7 @@ First, the original Bad Apple video is ran through `ffmpeg`'s `threshold` filter
 
 For the former, the file is reencoded as a raw RGB24 MOV file with raw PCM U8 audio. 
 
-For the latter, each frame at 20fps is extracted as a numbered PNG image into `./frames`, and the `generate.js` script is used, which loads each image up, and reads each pixel's value from the red channel (it's all white and black so the color channel used didn't matter), storing into an array alongside the specified framerate. Once every image had been read and parsed, the large resulting array is formatted as JSON and written out as `converted.json`.
+For the latter, each frame at 30 fps is extracted as a numbered PNG image into `./frames`, and the `generate.js` script is used, which loads each image up, and reads each pixel's value from the red channel (it's all white and black so the color channel used didn't matter), storing into an array alongside the specified framerate. Once every image had been read and parsed, the large resulting array is formatted as JSON and written out as `converted.json`.
 
 ## Streaming (Version 2.x NA, deprecated)
 (NA = New Architecture)
